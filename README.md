@@ -25,3 +25,7 @@ That's it!
 If you do this more than once (without having carefully curated what you're bringing in to Roam), you'll end up with pages containing repeated highlights. It's obviously up to you to curate your list.
 
 Roam's import function doesn't seem to work well in Safari. Try Firefox.
+
+## To Do
+
+I'll soon set up a nice frontend for this at readwise2roam.com where users can upload their CSV, have the file parsed and MD files generated to then be downloaded in a ZIP file.
