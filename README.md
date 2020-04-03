@@ -4,11 +4,11 @@ Readwise to Roam brings together two of my favorite products:
   - [Readwise](https://readwise.io) which syncs with Amazon Kindle, Apple Books, Instapaper and many others to bring your highlights into its database and email you a selection every morning.
   - [Roam Research](http://roamresearch.com) which is a note-taking app that allows all notes to be relative to each other, thanks to its "bi-directional linking."
   
-As soon as I started using Roam, I wanted to bring my Readwise highlights into it but, with more than 5,000 of them, I wasn't going to do that manually. So I wrote a PHP script to convert Readwise's exported CSV to Roam's importable MD files.
+As soon as I started using Roam, I wanted to bring my Readwise highlights into it but, with more than 5,000 of them, I wasn't going to do that manually. So I wrote a PHP script to convert Readwise's exported CSV file to Roam's importable MD files.
 
 ## To use
 
-Download/clone `readwise2roam.php` to a new directory (which will be filled with MD files, so you don't want this on your desktop!).
+Download/clone `readwise2roam.php` to a new directory (which will eventually be filled with MD files so you don't want this on your desktop!).
 
 Go to Readwise and click on `Account Settings` then `Export Your Data` and download the CSV file to the same new directory.
 
