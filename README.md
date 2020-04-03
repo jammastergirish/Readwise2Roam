@@ -1,6 +1,6 @@
 # Readwise2Roam
 
-Readwise to Roam brings together two of my favorite products:
+Readwise2Roam brings together two of my favorite products:
   - [Readwise](https://readwise.io) which syncs with Amazon Kindle, Apple Books, Instapaper and many others to bring your highlights into its database and email you a selection every morning.
   - [Roam Research](http://roamresearch.com) which is a note-taking app that allows all notes to be relative to each other, thanks to its "bi-directional linking."
   
