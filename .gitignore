@@ -1,2 +1,4 @@
 *.md
 *.csv
+www/.DS_Store
+.DS_Store
