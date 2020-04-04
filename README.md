@@ -8,6 +8,8 @@ As soon as I started using Roam, I wanted to bring my Readwise highlights into i
 
 ## To use
 
+(I'll soon set up a nice frontend for this at readwise2roam.com where users can upload their CSV, have the file parsed and MD files generated to then be downloaded in a ZIP file.)
+
 Download/clone `readwise2roam.php` to a new directory (which will eventually be filled with MD files so you don't want this on your desktop!).
 
 Go to Readwise and click on `Account Settings` then `Export Your Data` and download the CSV file to the same new directory.
@@ -25,7 +27,3 @@ That's it!
 If you do this more than once (without having carefully curated what you're bringing in to Roam), you'll end up with pages containing repeated highlights. It's obviously up to you to curate your list.
 
 Roam's import function doesn't seem to work well in Safari. Try Firefox.
-
-## To Do
-
-I'll soon set up a nice frontend for this at readwise2roam.com where users can upload their CSV, have the file parsed and MD files generated to then be downloaded in a ZIP file.
