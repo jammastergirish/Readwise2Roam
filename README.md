@@ -27,3 +27,5 @@ That's it!
 If you do this more than once (without having carefully curated what you're bringing in to Roam), you'll end up with pages containing repeated highlights. It's obviously up to you to curate your list.
 
 Roam's import function doesn't seem to work well in Safari. Try Firefox.
+
+This code won't deal with two books with the same name, even if by different authors.
