@@ -6,21 +6,23 @@ Readwise2Roam brings together two of my favorite products:
   
 As soon as I started using Roam, I wanted to bring my Readwise highlights into it but, with more than 5,000 of them, I wasn't going to do that manually. So I wrote a PHP script to convert Readwise's exported CSV file to Roam's importable MD files.
 
-## To use
+![image](https://raw.githubusercontent.com/jammastergirish/Readwise2Roam/master/Screenshot%202020-04-05%20at%2012.20.01.png)
 
-You can either run the script on your own machine by following the instructions below — or simply go to [Readwise2Roam.com](https://www.readwise2roam.com/) and follow the instructions.
+## Instructions
+
+You can either run the script on your own machine by following the instructions below — or simply go to [Readwise2Roam.com](https://www.readwise2roam.com/).
 
 To run the script locally:
 
 - Download/clone `readwise2roam.php` to a new directory (which will eventually be filled with MD files so you don't want this on your desktop!).
 
-- Go to Readwise and click on `Account Settings` then `Export Your Data` and download the CSV file to the same new directory.
+- Go to Readwise's [Export Your Data](https://readwise.io/export) page and upload the file you get to the new directory you created.
 
-- On Mac, go to Terminal and `cd` to the new directory (either by knowing the full path or by simply typing `cd ` (with a followup space) and then dragging the new directory into Terminal) and then type `php readwise2roam.php`.
+- On Mac, go to Terminal and `cd` to the new directory and type `php readwise2roam.php`.
 
-= The script should run and fill the directory with MD files, the names of which will correspond to the titles of the books/articles you highlighted in Readwise.
+- The script should run and fill the directory with MD files, the names of which will correspond to the titles of the books/articles you highlighted in Readwise.
 
-- Go to Roam Research and click the three dots on the top right then `Import Files`. Select however many of the files you would like to import. Feel free to change the "New Page Name" then hit Import!
+- Go to Roam Research and click the three dots on the top right in Roam, press "Import" and select the books you'd like to import.
 
 ## Issues
 
