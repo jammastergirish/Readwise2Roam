@@ -8,7 +8,7 @@ As soon as I started using Roam, I wanted to bring my Readwise highlights into i
 
 ![image](https://raw.githubusercontent.com/jammastergirish/Readwise2Roam/master/Screenshot%202020-04-05%20at%2012.20.01.png)
 
-## To use
+## Instructions
 
 You can either run the script on your own machine by following the instructions below — or simply go to [Readwise2Roam.com](https://www.readwise2roam.com/).
 
