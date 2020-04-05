@@ -73,7 +73,7 @@ function RandomString($length = 8)
 <br><br>
 
 <div class="row">
-  <div class="column" style="flex: 33%;"><p><b>Security</b></p><p style="font-size: 0.8em;"><a href="https://github.com/jammastergirish/Readwise2Roam">Read through and run the code on your own machine!</a></p></div>
+  <div class="column" style="flex: 33%;"><p><b>Security</b></p><p style="font-size: 0.8em;">This site contains no cookies, trackers or ads. Still unsure? <a href="https://github.com/jammastergirish/Readwise2Roam">Read through the code and run it on your own machine!</a></p></div>
   <div class="column" style="flex: 33%;"><p><b>About</b></p><p style="font-size: 0.8em;">Readwise2Roam was created by  <a href="https://www.girishgupta.com">Girish Gupta</a>.</p></div>
   <div class="column" style="flex: 34%;"><p><b>Support</b></p><p style="font-size: 0.8em;">If you have any questions, comments or feedback please <a href="mailto:girish@girishgupta.com">send an email</a>.</p></div>
 </div> 
