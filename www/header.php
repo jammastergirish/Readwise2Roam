@@ -18,7 +18,6 @@ else
 <html>
 <head>
 <title>Readwise2Roam</title>
-<meta name="google-site-verification" content="rYMpfHzwDgKFYC4oQUIpzbQJiMUoz0grMtsFq7SzDC4" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" 
       type="image/png" 
