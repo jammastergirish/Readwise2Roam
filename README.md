@@ -10,7 +10,7 @@ As soon as I started using Roam, I wanted to bring my Readwise highlights into i
 
 ## To use
 
-You can either run the script on your own machine by following the instructions below — or simply go to [Readwise2Roam.com](https://www.readwise2roam.com/) and follow the instructions.
+You can either run the script on your own machine by following the instructions below — or simply go to [Readwise2Roam.com](https://www.readwise2roam.com/).
 
 To run the script locally:
 
