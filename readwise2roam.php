@@ -1,5 +1,28 @@
 <?php
 
+class Book // Create class containing the books
+{
+    public $title;
+    public $highlights;
+}
+
+function FindBook($Books, $TitleThatIAmLookingFor) // Find a particular title within my array of Books 
+{
+    $IsBookInBooksArrayAndIfSoWhatNumberBookIsIt = -1; // I originally wanted to return FALSE here but PHP sees FALSE as equal to 0 but I still need to differentiate between the zeroth (i.e., first) book and not having found the book in the object so we use -1 (https://softwareengineering.stackexchange.com/questions/198284/why-is-0-false)
+    $j=0;
+    while ($j<count($Books)) 
+    {
+        if (($Books[$j]->title)==$TitleThatIAmLookingFor) // Is this book's title the same as the title I'm looking for
+        {
+            $IsBookInBooksArrayAndIfSoWhatNumberBookIsIt = $j;   
+            $j = count($Books); // Now that we've found the book, let's get out of this loop.
+        }
+        $j++;
+    }
+
+    return $IsBookInBooksArrayAndIfSoWhatNumberBookIsIt;
+}
+
 //To deal with horrible character encodings. mb_convert_encoding("xxx\xc3\xadxxx", 'UTF-8'); didn't always work so used https://stackoverflow.com/a/19606250/13136079
 function decode_code($code) 
 {
@@ -26,60 +49,47 @@ $ReadwiseDataFile = "readwise-data.csv";
 //Reverse the file
 $PreReverseFile = explode("\n",file_get_contents($ReadwiseDataFile));
 
-$ReverseFile = fopen("REVERSED-".$ReadwiseDataFile, "w");
+$ReverseFile = fopen("REVERSED-".$ReadwiseDataFile, "w"); // Make a new file called REVERSED-...
 
 foreach(array_reverse($PreReverseFile) as $Line)
 { 
-    fwrite($ReverseFile, $Line."\n");
+    fwrite($ReverseFile, $Line."\n"); // Write to it
 }
 
-$row = 0;
 if (($handle = fopen("REVERSED-".$ReadwiseDataFile, "r")) !== FALSE) // Open the reversed file
 {
     $i=0;
     $NumberOfHighlights=0;
     $NumberOfFiles=0;
+
     while (($data = fgetcsv($handle, 10000, ",")) !== FALSE) //https://www.php.net/manual/en/function.fgetcsv.php
     {
-        $num = count($data); // Number of fields
-        $row++; // Row number
+        // $num = count($data); // Number of fields
 
         $text = decode_code(substr($data[0],2,-1));
         $title = decode_code(substr($data[1],2,-1));
         $author = decode_code(substr($data[2],2,-1));
 
-        if ($title!="ok Titl")
+        if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
         {
-            $filename = $title.".md";
-
             echo "\n\n";
-            if(!file_exists($filename))
-            {
-                $file = fopen($filename, "w");
-                fwrite($file, "- By [[".$author."]]\n");
-                fwrite($file, "- (Imported by Readwise2Roam.)\n");
+            $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
 
-                echo "Creating ".$title.".md and adding author (".$author.").\n";
+            if ($OutputofFindBookFunction<0) // If not, create a new Book.
+            {
+                $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
+                $Books[$BookNumber] = new Book;
+                $Books[$BookNumber]->title = $title; // Add title and basic information
+                $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
+
+                echo "Adding book ".$title." and adding author (".$author.").\n"; 
 
                 $NumberOfFiles++;
             }
-            else
-            {
-                // $file = fopen($filename, "w+"); No need to actually open the file as we're using file_put_contents() below
-                echo "Opening ".$title.".md.\n";
-            }
 
-            if(strpos(file_get_contents($filename),$text) !== false) // If the highlight isn't already in the file
-            {
-            
-            }
-            else
-            {
-                file_put_contents($filename, "- ".$text."\n", FILE_APPEND);
-                echo "\tAdding :\n\t\t".substr($text, 0, 1000)."...\n";
-
-                $NumberOfHighlights++;
-            }
+            $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
+            echo "\tAdding :\n\t\t".substr($text, 0, 1000)."...\n";
+            $NumberOfHighlights++;
         }
             
         $i++;
@@ -87,8 +97,20 @@ if (($handle = fopen("REVERSED-".$ReadwiseDataFile, "r")) !== FALSE) // Open the
     fclose($handle);
 }
 
+//Create all the MD files
+$i=0;
+foreach ($Books as $Book)
+{
+    $file = fopen($Book->title.".md", "w");
+    foreach ($Book->highlights as $Highlight)
+    {
+        fwrite($file, $Highlight);
+    }
+    $i++;
+}
+
 $EndTime = microtime(TRUE);
 
-echo "\nIn ".number_format(($EndTime-$StartTime)*1000)." milliseconds, added ".number_format($NumberOfHighlights)." highlights to ".number_format($NumberOfFiles)." markdown (.md) files, each of which corresponds to a Roam Research note";
+echo "\nIn ".number_format((($EndTime-$StartTime)*1000))." milliseconds, added ".number_format($NumberOfHighlights)." highlights to ".number_format($NumberOfFiles)." markdown (.md) files, each of which corresponds to a Roam Research note";
 
 ?>
