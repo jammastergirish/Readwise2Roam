@@ -6,6 +6,8 @@ Readwise2Roam brings together two of my favorite products:
   
 As soon as I started using Roam, I wanted to bring my Readwise highlights into it but, with more than 5,000 of them, I wasn't going to do that manually. So I wrote a PHP script to convert Readwise's exported CSV file to Roam's importable MD files.
 
+![image](https://raw.githubusercontent.com/jammastergirish/Readwise2Roam/master/Screenshot%202020-04-05%20at%2012.20.01.png)
+
 ## To use
 
 You can either run the script on your own machine by following the instructions below — or simply go to [Readwise2Roam.com](https://www.readwise2roam.com/) and follow the instructions.
