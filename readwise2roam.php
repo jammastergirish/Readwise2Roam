@@ -102,10 +102,7 @@ $i=0;
 foreach ($Books as $Book)
 {
     $file = fopen($Book->title.".md", "w");
-    foreach ($Book->highlights as $Highlight)
-    {
-        fwrite($file, $Highlight);
-    }
+    fwrite($file, implode("", $Book->highlights));
     $i++;
 }
 
