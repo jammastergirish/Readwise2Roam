@@ -23,7 +23,7 @@ if (!$mobile)
     <br><br>
     - <a href="https://www.roamresearch.com">Roam Research</a> which is a note-taking app that allows all notes to be relative to each other.
     <br><br>
-As soon as I started using Roam, I wanted to bring my Readwise highlights into it. So I wrote some code to do it for me—and realized I wasn't the only one that would want such a hack.
+As soon as I started using Roam, I wanted to bring my Readwise highlights into it. So I wrote some code to do it for me—and realized I wasn't the only one who would want such a hack.
     </p>
 <?php
 if (!$mobile)
@@ -74,7 +74,7 @@ function RandomString($length = 8)
 
 <div class="row">
   <div class="column" style="flex: 33%;"><p><b>Security</b></p><p style="font-size: 0.8em;"><a href="https://github.com/jammastergirish/Readwise2Roam">Read through and run the code on your own machine!</a></p></div>
-  <div class="column" style="flex: 33%;"><p><b>About</b></p><p style="font-size: 0.8em;">Readwise2Roam was created by  <a href="https://www.girishgupta.com">Girish Gupta</a>, a physics graduate, foreign correspondent and data scientist.</p></div>
+  <div class="column" style="flex: 33%;"><p><b>About</b></p><p style="font-size: 0.8em;">Readwise2Roam was created by  <a href="https://www.girishgupta.com">Girish Gupta</a>.</p></div>
   <div class="column" style="flex: 34%;"><p><b>Support</b></p><p style="font-size: 0.8em;">If you have any questions, comments or feedback please <a href="mailto:girish@girishgupta.com">send an email</a>.</p></div>
 </div> 
 
