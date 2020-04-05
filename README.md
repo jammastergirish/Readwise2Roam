@@ -16,13 +16,13 @@ To run the script locally:
 
 - Download/clone `readwise2roam.php` to a new directory (which will eventually be filled with MD files so you don't want this on your desktop!).
 
-- Go to Readwise and click on `Account Settings` then `Export Your Data` and download the CSV file to the same new directory.
+- Go to Readwise's [Export Your Data](https://readwise.io/export) page and upload the file you get to the new directory you created.
 
-- On Mac, go to Terminal and `cd` to the new directory (either by knowing the full path or by simply typing `cd ` (with a followup space) and then dragging the new directory into Terminal) and then type `php readwise2roam.php`.
+- On Mac, go to Terminal and `cd` to the new directory and type `php readwise2roam.php`.
 
-= The script should run and fill the directory with MD files, the names of which will correspond to the titles of the books/articles you highlighted in Readwise.
+- The script should run and fill the directory with MD files, the names of which will correspond to the titles of the books/articles you highlighted in Readwise.
 
-- Go to Roam Research and click the three dots on the top right then `Import Files`. Select however many of the files you would like to import. Feel free to change the "New Page Name" then hit Import!
+- Go to Roam Research and click the three dots on the top right in Roam, press "Import" and select the books you'd like to import.
 
 ## Issues
 
