@@ -6,7 +6,7 @@ class Book // Create class containing the books
     public $highlights;
 }
 
-function FindBook($Books, $TitleThatIAmLookingFor) // Fucntion to find a particular title within my array of Books 
+function FindBook($Books, $TitleThatIAmLookingFor) // Find a particular title within my array of Books 
 {
     $IsBookInBooksArrayAndIfSoWhatNumberBookIsIt = -1; // I originally wanted to return FALSE here but PHP sees FALSE as equal to 0 but I still need to differentiate between the zeroth (i.e., first) book and not having found the book in the object so we use -1 (https://softwareengineering.stackexchange.com/questions/198284/why-is-0-false)
     $j=0;
@@ -40,11 +40,13 @@ while ($i<10) // Create 10 books
 
 $BookTitleIAmLookingFor = "Title5"; // I'm looking for a book called "Title5"
 
-if (FindBook($Books, $BookTitleIAmLookingFor)>=0) // Does the function I wrote return 0 or positive integer, meaning that the book was previously added?
+$OutputofFindBookFunction = FindBook($Books, $BookTitleIAmLookingFor);
+
+if ($OutputofFindBookFunction>=0) // Does the function I wrote return 0 or positive integer, meaning that the book was previously added?
 {
     //book has been found so add highlight
-    echo "Found it at position ".FindBook($Books, $BookTitleIAmLookingFor)."!\n\n\n";
-    $Books[FindBook($Books, $BookTitleIAmLookingFor)]->highlights[] = "Highlight 4\n";
+    echo "Found it at position ".$OutputofFindBookFunction."!\n\n\n";
+    $Books[$OutputofFindBookFunction]->highlights[] = "Highlight 4\n";
 }
 else // It returned -1, implying that book not peviously added
 {
