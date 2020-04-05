@@ -18,6 +18,8 @@ function decode_code($code)
         }, $code);
 }
 
+$StartTime = microtime(TRUE);
+
 //Bring in the data
 $ReadwiseDataFile = "readwise-data.csv";
 
@@ -85,6 +87,8 @@ if (($handle = fopen("REVERSED-".$ReadwiseDataFile, "r")) !== FALSE) // Open the
     fclose($handle);
 }
 
-echo "\nAdded ".number_format($NumberOfHighlights)." highlights to ".number_format($NumberOfFiles)." markdown (.md) files, each of which corresponds to a Roam Research note";
+$EndTime = microtime(TRUE);
+
+echo "\nIn ".number_format(($EndTime-$StartTime)*1000)." milliseconds, added ".number_format($NumberOfHighlights)." highlights to ".number_format($NumberOfFiles)." markdown (.md) files, each of which corresponds to a Roam Research note";
 
 ?>
