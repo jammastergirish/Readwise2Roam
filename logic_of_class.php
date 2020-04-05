@@ -4,11 +4,20 @@ class Book
 {
     public $title;
     public $highlights;
+}
 
-    function FindBook($name)
+function FindBook($Books, $TitleThatIAmLookingFor)
+{
+    $j=0;
+    while ($j<count($Books))
     {
-        
+        if ($Books[$j]->title==$TitleThatIAmLookingFor)
+        {
+            $NumberThatIWant = $j;   
+        }
+        $j++;
     }
+    return $NumberThatIWant;
 }
 
 $i=0;
@@ -33,19 +42,17 @@ $Books[$i]->highlights[] = "Highlight 3a\n";
 
 
 
-$TitleThatIAmLookingFor = "Title of book 0";
+// $j=0;
+// while ($j<count($Books))
+// {
+//     if ($Books[$j]->title==$TitleThatIAmLookingFor)
+//     {
+//         $NumberThatIWant = $j;   
+//     }
+//     $j++;
+// }
 
-$j=0;
-while ($j<count($Books))
-{
-    if ($Books[$j]->title==$TitleThatIAmLookingFor)
-    {
-        $NumberThatIWant = $j;   
-    }
-    $j++;
-}
-
-$Books[$NumberThatIWant]->highlights[] = "Highlight 4a\n";
+$Books[FindBook($Books, "Title of book 0")]->highlights[] = "Highlight 4a\n";
 
 
 
