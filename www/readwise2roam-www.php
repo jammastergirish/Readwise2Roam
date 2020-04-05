@@ -1,52 +1,53 @@
 <?php
+ob_start( 'ob_gzhandler' );
 
-// https://www.w3schools.com/php/php_file_upload.asp
-$target_dir = "/opt/bitnami/apache2/htdocs/uploads/";
+$iPod = strpos($_SERVER['HTTP_USER_AGENT'],"iPod");
+$iPhone = strpos($_SERVER['HTTP_USER_AGENT'],"iPhone");
+$iPad = strpos($_SERVER['HTTP_USER_AGENT'],"iPad");
+$android = strpos($_SERVER['HTTP_USER_AGENT'],"Android");
 
-$fileName = $_POST['fileName'];
-
-$target_file = $target_dir.$fileName.".csv";
-
-$uploadOk = true;
-
-if(isset($_POST["submit"]))
+if($iPad||$iPhone||$iPod||$android)
 {
-    if (file_exists($target_file))
-    {
-        echo "Sorry, file already exists.";
-        $uploadOk = false;
-    }
-    
-    if ($_FILES["fileToUpload"]["size"] > 10000000)
-    {
-        echo "Sorry, your file is too large";
-        $uploadOk = false;
-    }
-    
-    if((strtolower(pathinfo($target_file,PATHINFO_EXTENSION))!="csv")||$_FILES["fileToUpload"]["type"]!="text/csv")
-    {
-        echo "Sorry, only CSV files are allowed.";
-        $uploadOk = false;
-    }
-    
-    if (!$uploadOk)
-    {
-        echo "Sorry, your file was not uploaded.";
-    
-    }
-    else
-    {
-        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file))
-        {
-            echo "The file ".basename($_FILES["fileToUpload"]["name"]). " has been uploaded. ";
-        }
-        else
-        {
-            echo "Sorry, there was an error uploading your file.";
-        }
-    }
+    $mobile = true;
+}
+else
+{
+    $mobile = false;
+}
+?>
+<html>
+<head>
+<title>Readwise2Roam</title>
+<meta name="google-site-verification" content="rYMpfHzwDgKFYC4oQUIpzbQJiMUoz0grMtsFq7SzDC4" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" 
+      type="image/png" 
+      href="https://www.readwise2roam.com/favicon.png">
+</script>
+<style>
+<?php
+require_once(__DIR__."/style.php");
+?>
+* {
+  box-sizing: border-box;
 }
 
+.row {
+  display: flex;
+}
+
+.column {
+  padding: 10px;
+}
+</style>
+</head>
+<body>
+<CENTER>
+
+<br><br>
+<a href="/"><img src="logo.png" width=400 height=70 alt="Readwise2Roam"></a><br><br><br><br>
+
+<?php
 
 class Book // Create class containing the books
 {
@@ -89,73 +90,124 @@ function decode_code($code)
         }, $code);
 }
 
-$StartTime = microtime(TRUE);
 
-$ReadwiseDataFile = $target_file;
 
-//Reverse the file
-$PreReverseFile = explode("\n",file_get_contents($ReadwiseDataFile));
+// https://www.w3schools.com/php/php_file_upload.asp
+$target_dir = "/opt/bitnami/apache2/htdocs/uploads/";
 
-$ReverseFile = fopen("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv", "w");
+$fileName = $_POST['fileName'];
 
-foreach(array_reverse($PreReverseFile) as $Line)
-{ 
-    fwrite($ReverseFile, $Line."\n");
-}
+$target_file = $target_dir.$fileName.".csv";
 
-unlink($ReadwiseDataFile);
+$uploadOk = true;
 
-if (($handle = fopen("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv", "r")) !== FALSE) // Open the reversed file
+if(isset($_POST["submit"]))
 {
-    $i=0;
-    $NumberOfHighlights=0;
-    $NumberOfFiles=0;
-
-    while (($data = fgetcsv($handle, 10000, ",")) !== FALSE) //https://www.php.net/manual/en/function.fgetcsv.php
+    if ($_FILES["fileToUpload"]["size"] > 10000000)
     {
-        // $num = count($data); // Number of fields
-
-        $text = decode_code(substr($data[0],2,-1));
-        $title = decode_code(substr($data[1],2,-1));
-        $author = decode_code(substr($data[2],2,-1));
-
-        if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
+        $error = "Your file is greater than 10 MB. Perhaps either break it down or run our code on your own machine.";
+        $uploadOk = false;
+    }
+    
+    if((strtolower(pathinfo($target_file,PATHINFO_EXTENSION))!="csv")||$_FILES["fileToUpload"]["type"]!="text/csv")
+    {
+        $error = "Only CSV files are allowed.";
+        $uploadOk = false;
+    }
+    
+    if (!$uploadOk)
+    {
+        $error = "Your file was not uploaded.";
+        echo "<p><font color=red>".$error."</font></p>";
+    
+    }
+    else
+    {
+        if (!move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file))
         {
-            $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
-            if ($OutputofFindBookFunction<0) // If not, create a new Book.
-            {
-                $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
-                $Books[$BookNumber] = new Book;
-                $Books[$BookNumber]->title = $title; // Add title and basic information
-                $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
+            $error = "There was an error uploading your file.";
+        }
+        else
+        {
+            $StartTime = microtime(TRUE);
 
-                $NumberOfFiles++;
+            $ReadwiseDataFile = $target_file;
+
+            //Reverse the file
+            $PreReverseFile = explode("\n",file_get_contents($ReadwiseDataFile));
+
+            $ReverseFile = fopen("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv", "w");
+
+            foreach(array_reverse($PreReverseFile) as $Line)
+            { 
+                fwrite($ReverseFile, $Line."\n");
             }
 
-            $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
+            unlink($ReadwiseDataFile);
 
-            $NumberOfHighlights++;
+            if (($handle = fopen("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv", "r")) !== FALSE) // Open the reversed file
+            {
+                $i=0;
+                $NumberOfHighlights=0;
+                $NumberOfFiles=0;
+
+                while (($data = fgetcsv($handle, 10000, ",")) !== FALSE) //https://www.php.net/manual/en/function.fgetcsv.php
+                {
+                    // $num = count($data); // Number of fields
+
+                    $text = decode_code(substr($data[0],2,-1));
+                    $title = decode_code(substr($data[1],2,-1));
+                    $author = decode_code(substr($data[2],2,-1));
+
+                    if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
+                    {
+                        $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
+                        if ($OutputofFindBookFunction<0) // If not, create a new Book.
+                        {
+                            $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
+                            $Books[$BookNumber] = new Book;
+                            $Books[$BookNumber]->title = $title; // Add title and basic information
+                            $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
+
+                            $NumberOfFiles++;
+                        }
+
+                        $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
+
+                        $NumberOfHighlights++;
+                    }
+                        
+                    $i++;
+                }
+                fclose($handle);
+            }
+
+            unlink("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv");
+            ini_set('track_errors', 1);
+            $zip = new ZipArchive; //https://www.virendrachandak.com/techtalk/how-to-create-a-zip-file-using-php/
+
+            if ($zip->open("output/".$fileName.".zip", ZipArchive::CREATE) === TRUE)
+            {
+                $i=0;
+                foreach ($Books as $Book)
+                {
+                    $zip->addFromString($Book->title.".md", implode("", $Book->highlights));
+                }
+            }
+            $zip->close();
+
+            $EndTime = microtime(TRUE);
+
+            echo "<p>Added ".number_format($NumberOfHighlights)." highlights from ".number_format($NumberOfFiles)." books (in just ".number_format((($EndTime-$StartTime)*1000))." milliseconds)!";
+            echo "<br><br><br><br>";
+            echo "<a href=\"output/".$fileName.".zip\" class=\"btn-primary\">Download zip file!</a>";
+            echo "<br><br><br><br>";
+            echo "Unzip the file, go to <a href=\"https://www.roamresearch.com\">Roam</a>, click the three dots on the top right, press \"Import\" and select the books you'd like to import.</p>";
         }
-            
-        $i++;
-    }
-    fclose($handle);
-}
-
-unlink("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv");
-ini_set('track_errors', 1);
-$zip = new ZipArchive; //https://www.virendrachandak.com/techtalk/how-to-create-a-zip-file-using-php/
-
-if ($zip->open("output/".$fileName.".zip", ZipArchive::CREATE) === TRUE)
-{
-    $i=0;
-    foreach ($Books as $Book)
-    {
-        $zip->addFromString($Book->title.".md", implode("", $Book->highlights));
     }
 }
-$zip->close();
 
-echo "<a href=\"output/".$fileName.".zip\">Download your zip file!</a>";
+echo "<br><br>";
 
+include("footer.php");
 ?>
