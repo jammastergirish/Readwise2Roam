@@ -21,7 +21,7 @@ if (!$mobile)
     <br><br>
     - <a href="https://www.readwise.io">Readwise</a> which syncs with Amazon Kindle, Apple Books, Instapaper and many others to bring your highlights into its database and email you a selection every morning.
     <br><br>
-    - <a href="https://www.roamresearch.com">Roam Research</a> which is a note-taking app that allows all notes to be relative to each other.
+    - <a href="https://www.roamresearch.com">Roam Research</a> which is a note-taking app that allows all notes to exist relative to each other.
     <br><br>
 As soon as I started using Roam, I wanted to bring my Readwise highlights into it. So I wrote some code to do it for me—and realized I wasn't the only one who would want such a hack.
     </p>
