@@ -49,6 +49,21 @@ require_once(__DIR__."/style.php");
 
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once 'vendor/autoload.php';  
+  
+use Google\Cloud\Storage\StorageClient;
+
+$client = new StorageClient(['projectId' => "readwise2roam-275316"]);
+$client->registerStreamWrapper();
+
+// foreach ($client->buckets() as $bucket) {
+//     printf('Bucket: %s' . PHP_EOL, $bucket->name());
+// }
+
 class Book // Create class containing the books
 {
     public $title;
@@ -93,7 +108,7 @@ function decode_code($code)
 
 
 // https://www.w3schools.com/php/php_file_upload.asp
-$target_dir = "/opt/bitnami/apache2/htdocs/uploads/";
+$target_dir = "gs://readwise2roam-275316.appspot.com/uploads/";
 
 $fileName = $_POST['fileName'];
 
@@ -103,9 +118,9 @@ $uploadOk = true;
 
 if(isset($_POST["submit"]))
 {
-    if ($_FILES["fileToUpload"]["size"] > 10000000)
+    if ($_FILES["fileToUpload"]["size"] > 20000000)
     {
-        $error = "Your file is greater than 10 MB. Perhaps either break it down or run our code on your own machine.";
+        $error = "Your file is greater than 20 MB. Perhaps either break it down or run the code on your own machine.";
         $uploadOk = false;
     }
     
@@ -129,6 +144,7 @@ if(isset($_POST["submit"]))
         }
         else
         {
+            echo "File uploaded...";
             $StartTime = microtime(TRUE);
 
             $ReadwiseDataFile = $target_file;
@@ -136,63 +152,71 @@ if(isset($_POST["submit"]))
             //Reverse the file
             $PreReverseFile = explode("\n",file_get_contents($ReadwiseDataFile));
 
-            $ReverseFile = fopen("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv", "w");
+            $ReverseFile = fopen("gs://readwise2roam-275316.appspot.com/uploads/REVERSED-".$fileName.".csv", "w");
 
             foreach(array_reverse($PreReverseFile) as $Line)
             { 
                 fwrite($ReverseFile, $Line."\n");
             }
 
-            unlink($ReadwiseDataFile);
+            // fclose($ReverseFile);
 
-            if (($handle = fopen("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv", "r")) !== FALSE) // Open the reversed file
+            //unlink($ReadwiseDataFile);
+
+            echo "Reversed CSV opened;";
+            $i=0;
+            $NumberOfHighlights=0;
+            $NumberOfFiles=0;
+
+            while (($data = fgetcsv($ReverseFile, 10000, ",")) !== FALSE) //https://www.php.net/manual/en/function.fgetcsv.php
             {
-                $i=0;
-                $NumberOfHighlights=0;
-                $NumberOfFiles=0;
+                // $num = count($data); // Number of fields
 
-                while (($data = fgetcsv($handle, 10000, ",")) !== FALSE) //https://www.php.net/manual/en/function.fgetcsv.php
+                $text = decode_code(substr($data[0],2,-1));
+                $title = decode_code(substr($data[1],2,-1));
+                $author = decode_code(substr($data[2],2,-1));
+
+                if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
                 {
-                    // $num = count($data); // Number of fields
-
-                    $text = decode_code(substr($data[0],2,-1));
-                    $title = decode_code(substr($data[1],2,-1));
-                    $author = decode_code(substr($data[2],2,-1));
-
-                    if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
+                    $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
+                    if ($OutputofFindBookFunction<0) // If not, create a new Book.
                     {
-                        $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
-                        if ($OutputofFindBookFunction<0) // If not, create a new Book.
-                        {
-                            $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
-                            $Books[$BookNumber] = new Book;
-                            $Books[$BookNumber]->title = $title; // Add title and basic information
-                            $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
+                        $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
+                        $Books[$BookNumber] = new Book;
+                        $Books[$BookNumber]->title = $title; // Add title and basic information
+                        $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
 
-                            $NumberOfFiles++;
-                        }
-
-                        $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
-
-                        $NumberOfHighlights++;
+                        $NumberOfFiles++;
                     }
-                        
-                    $i++;
-                }
-                fclose($handle);
-            }
 
-            unlink("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv");
-            ini_set('track_errors', 1);
+                    $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
+
+                    $NumberOfHighlights++;
+                }
+                    
+                $i++;
+            }
+            fclose($ReverseFile);
+
+
+            //unlink("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv");
+            // https://stackoverflow.com/questions/21464475/how-can-i-delete-an-object-from-the-google-cloud-storage-using-php
+
+            //ISSUE HERE: https://issuetracker.google.com/issues/35897760
             $zip = new ZipArchive; //https://www.virendrachandak.com/techtalk/how-to-create-a-zip-file-using-php/
 
-            if ($zip->open("output/".$fileName.".zip", ZipArchive::CREATE) === TRUE)
+            if ($zip->open("gs://readwise2roam-275316.appspot.com/output/".$fileName.".zip", ZipArchive::CREATE) === TRUE)
             {
+                echo "Opened zip file";
                 $i=0;
                 foreach ($Books as $Book)
                 {
                     $zip->addFromString($Book->title.".md", implode("", $Book->highlights));
                 }
+            }
+            else
+            {
+                echo "Failed to open zip file";
             }
             $zip->close();
 
@@ -200,7 +224,7 @@ if(isset($_POST["submit"]))
 
             echo "<p>Added ".number_format($NumberOfHighlights)." highlights from ".number_format($NumberOfFiles)." books (in just ".number_format((($EndTime-$StartTime)*1000))." milliseconds)!";
             echo "<br><br><br><br>";
-            echo "<a href=\"output/".$fileName.".zip\" class=\"btn-primary\">Download zip file!</a>";
+            echo "<a href=\"https://storage.googleapis.com/readwise2roam-275316.appspot.com/output/".$fileName.".zip\" class=\"btn-primary\">Download zip file!</a>";
             echo "<br><br><br><br>";
             echo "Unzip the file, go to <a href=\"https://www.roamresearch.com\">Roam</a>, click the three dots on the top right, press \"Import\" and select the books you'd like to import.</p>";
         }
