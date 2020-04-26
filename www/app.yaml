@@ -1,0 +1,11 @@
+runtime: php73
+
+handlers:
+  - url: /(.+\.(gif|png|jpg|pdf|ico))$
+    static_files: \1
+    upload: .+\.(gif|png|jpg|pdf|ico)$
+    secure: always
+
+  - url: .*
+    script: auto
+    secure: always
