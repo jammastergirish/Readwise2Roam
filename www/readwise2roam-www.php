@@ -53,7 +53,7 @@ require_once 'vendor/autoload.php';
   
 use Google\Cloud\Storage\StorageClient;
 
-$ProjectID = "readwise2roam";
+$ProjectID = "readwise2roam-1";
 
 $client = new StorageClient(['projectId' => $ProjectID]);
 $client->registerStreamWrapper();
@@ -142,7 +142,6 @@ if(isset($_POST["submit"]))
         }
         else
         {
-            echo "File uploaded...";
             $StartTime = microtime(TRUE);
 
             //Bring in the data
