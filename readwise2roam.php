@@ -47,54 +47,51 @@ $StartTime = microtime(TRUE);
 $ReadwiseDataFile = "readwise-data.csv";
 
 //Reverse the file
-$PreReverseFile = explode("\n",file_get_contents($ReadwiseDataFile));
+$PreReverse = explode("\n", file_get_contents($ReadwiseDataFile));
 
-$ReverseFile = fopen("REVERSED-".$ReadwiseDataFile, "w"); // Make a new file called REVERSED-...
+$AllLinesInReversedList = array();
 
-foreach(array_reverse($PreReverseFile) as $Line)
+foreach(array_reverse($PreReverse) as $Line)
 { 
-    fwrite($ReverseFile, $Line."\n"); // Write to it
+    $AllLinesInReversedList[] = $Line;
 }
 
-if (($handle = fopen("REVERSED-".$ReadwiseDataFile, "r")) !== FALSE) // Open the reversed file
+$i=0;
+$NumberOfHighlights=0;
+$NumberOfFiles=0;
+
+foreach($AllLinesInReversedList as $Line)
 {
-    $i=0;
-    $NumberOfHighlights=0;
-    $NumberOfFiles=0;
+    // $num = count($data); // Number of fields
+    $data = str_getcsv($Line, ",");
 
-    while (($data = fgetcsv($handle, 10000, ",")) !== FALSE) //https://www.php.net/manual/en/function.fgetcsv.php
+    $text = decode_code(substr($data[0],2,-1));
+    $title = decode_code(substr($data[1],2,-1));
+    $author = decode_code(substr($data[2],2,-1));
+
+    if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
     {
-        // $num = count($data); // Number of fields
+        echo "\n\n";
+        $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
 
-        $text = decode_code(substr($data[0],2,-1));
-        $title = decode_code(substr($data[1],2,-1));
-        $author = decode_code(substr($data[2],2,-1));
-
-        if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
+        if ($OutputofFindBookFunction<0) // If not, create a new Book.
         {
-            echo "\n\n";
-            $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
+            $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
+            $Books[$BookNumber] = new Book;
+            $Books[$BookNumber]->title = $title; // Add title and basic information
+            $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
 
-            if ($OutputofFindBookFunction<0) // If not, create a new Book.
-            {
-                $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
-                $Books[$BookNumber] = new Book;
-                $Books[$BookNumber]->title = $title; // Add title and basic information
-                $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
+            echo "Adding book ".$title." and adding author (".$author.").\n"; 
 
-                echo "Adding book ".$title." and adding author (".$author.").\n"; 
-
-                $NumberOfFiles++;
-            }
-
-            $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
-            echo "\tAdding :\n\t\t".substr($text, 0, 1000)."...\n";
-            $NumberOfHighlights++;
+            $NumberOfFiles++;
         }
-            
-        $i++;
+
+        $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
+        echo "\tAdding :\n\t\t".substr($text, 0, 1000)."...\n";
+        $NumberOfHighlights++;
     }
-    fclose($handle);
+        
+    $i++;
 }
 
 //Create all the MD files
