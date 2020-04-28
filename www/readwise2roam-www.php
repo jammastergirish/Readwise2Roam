@@ -49,15 +49,11 @@ require_once(__DIR__."/style.php");
 
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once 'vendor/autoload.php';  
   
 use Google\Cloud\Storage\StorageClient;
 
-$ProjectID = "readwise2roam-275316";
+$ProjectID = "readwise2roam";
 
 $client = new StorageClient(['projectId' => $ProjectID]);
 $client->registerStreamWrapper();
@@ -153,59 +149,54 @@ if(isset($_POST["submit"]))
             $ReadwiseDataFile = $target_file;
 
             //Reverse the file
-            $PreReverseFile = explode("\n",file_get_contents($ReadwiseDataFile));
+            $PreReverse = explode("\n", file_get_contents($ReadwiseDataFile));
 
-            $ReverseFile = fopen("gs://".$ProjectID.".appspot.com/uploads/REVERSED-".$fileName.".csv", "w");
+            $AllLinesInReversedList = array();
 
-            foreach(array_reverse($PreReverseFile) as $Line)
+            foreach(array_reverse($PreReverse) as $Line)
             { 
-                fwrite($ReverseFile, $Line."\n");
+                $AllLinesInReversedList[] = $Line;
             }
 
             //unlink($ReadwiseDataFile);     
             
-            if (($handle = $ReverseFile) !== FALSE) // Open the reversed file
+            $i=0;
+            $NumberOfHighlights=0;
+            $NumberOfFiles=0;
+
+            foreach($AllLinesInReversedList as $Line)
             {
-                $i=0;
-                $NumberOfHighlights=0;
-                $NumberOfFiles=0;
+                // $num = count($data); // Number of fields
+                $data = str_getcsv($Line, ",");
 
-                while (($data = fgetcsv($handle, 10000, ",")) !== FALSE) //https://www.php.net/manual/en/function.fgetcsv.php
+                $text = decode_code(substr($data[0],2,-1));
+                $title = decode_code(substr($data[1],2,-1));
+                $author = decode_code(substr($data[2],2,-1));
+
+                if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
                 {
-                    // $num = count($data); // Number of fields
-
-                    $text = decode_code(substr($data[0],2,-1));
-                    $title = decode_code(substr($data[1],2,-1));
-                    $author = decode_code(substr($data[2],2,-1));
-
-                    if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
+                    $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
+                    if ($OutputofFindBookFunction<0) // If not, create a new Book.
                     {
-                        $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
-                        if ($OutputofFindBookFunction<0) // If not, create a new Book.
-                        {
-                            $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
-                            $Books[$BookNumber] = new Book;
-                            $Books[$BookNumber]->title = $title; // Add title and basic information
-                            $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
+                        $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
+                        $Books[$BookNumber] = new Book;
+                        $Books[$BookNumber]->title = $title; // Add title and basic information
+                        $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
 
-                            $NumberOfFiles++;
-                        }
-
-                        $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
-
-                        $NumberOfHighlights++;
+                        $NumberOfFiles++;
                     }
-                        
-                    $i++;
+
+                    $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
+
+                    $NumberOfHighlights++;
                 }
-                fclose($handle);
+                    
+                $i++;
             }
-
-
-            //unlink("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv");
+    
             // https://stackoverflow.com/questions/21464475/how-can-i-delete-an-object-from-the-google-cloud-storage-using-php
 
-            //ISSUE HERE: https://issuetracker.google.com/issues/35897760
+            //ISSUE AND FIX IN test.php
             $dir = sys_get_temp_dir();
             $tmp = tempnam($dir, $fileName.".zip");
 
