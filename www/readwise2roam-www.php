@@ -106,7 +106,7 @@ function decode_code($code)
 
 
 // https://www.w3schools.com/php/php_file_upload.asp
-$target_dir = "gs://".$ProjectID.".appspot.com/uploads/";
+$target_dir = "gs://".$ProjectID.".appspot.com/";
 
 $fileName = $_POST['fileName'];
 
@@ -150,6 +150,8 @@ if(isset($_POST["submit"]))
             //Reverse the file
             $PreReverse = explode("\n", file_get_contents($ReadwiseDataFile));
 
+            unlink($ReadwiseDataFile);
+
             $AllLinesInReversedList = array();
 
             foreach(array_reverse($PreReverse) as $Line)
@@ -192,8 +194,6 @@ if(isset($_POST["submit"]))
                     
                 $i++;
             }
-    
-            // https://stackoverflow.com/questions/21464475/how-can-i-delete-an-object-from-the-google-cloud-storage-using-php
 
             //ISSUE AND FIX IN test.php
             $dir = sys_get_temp_dir();
@@ -207,13 +207,13 @@ if(isset($_POST["submit"]))
             }
             $zip->close();
 
-            copy($tmp, "gs://".$ProjectID.".appspot.com/output/".$fileName.".zip");
+            copy($tmp, "gs://".$ProjectID.".appspot.com/".$fileName.".zip");
 
             $EndTime = microtime(TRUE);
 
             echo "<p>Added ".number_format($NumberOfHighlights)." highlights from ".number_format($NumberOfFiles)." books (in just ".number_format((($EndTime-$StartTime)*1000))." milliseconds)!";
             echo "<br><br><br><br>";
-            echo "<a href=\"https://storage.googleapis.com/".$ProjectID.".appspot.com/output/".$fileName.".zip\" class=\"btn-primary\">Download zip file!</a>";
+            echo "<a href=\"https://storage.googleapis.com/".$ProjectID.".appspot.com/".$fileName.".zip\" class=\"btn-primary\">Download zip file!</a>";
             echo "<br><br><br><br>";
             echo "Unzip the file, go to <a href=\"https://www.roamresearch.com\">Roam</a>, click the three dots on the top right, press \"Import\" and select the books you'd like to import.</p>";
         }
