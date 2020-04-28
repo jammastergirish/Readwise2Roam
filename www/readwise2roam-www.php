@@ -149,6 +149,7 @@ if(isset($_POST["submit"]))
             echo "File uploaded...";
             $StartTime = microtime(TRUE);
 
+            //Bring in the data
             $ReadwiseDataFile = $target_file;
 
             //Reverse the file
@@ -161,44 +162,44 @@ if(isset($_POST["submit"]))
                 fwrite($ReverseFile, $Line."\n");
             }
 
-            // fclose($ReverseFile);
-
-            //unlink($ReadwiseDataFile);       
-
-            echo "Reversed CSV opened;";
-            $i=0;
-            $NumberOfHighlights=0;
-            $NumberOfFiles=0;
-
-            while (($data = fgetcsv($ReverseFile, 10000, ",")) !== FALSE) //https://www.php.net/manual/en/function.fgetcsv.php
+            //unlink($ReadwiseDataFile);     
+            
+            if (($handle = $ReverseFile) !== FALSE) // Open the reversed file
             {
-                // $num = count($data); // Number of fields
+                $i=0;
+                $NumberOfHighlights=0;
+                $NumberOfFiles=0;
 
-                $text = decode_code(substr($data[0],2,-1));
-                $title = decode_code(substr($data[1],2,-1));
-                $author = decode_code(substr($data[2],2,-1));
-
-                if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
+                while (($data = fgetcsv($handle, 10000, ",")) !== FALSE) //https://www.php.net/manual/en/function.fgetcsv.php
                 {
-                    $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
-                    if ($OutputofFindBookFunction<0) // If not, create a new Book.
+                    // $num = count($data); // Number of fields
+
+                    $text = decode_code(substr($data[0],2,-1));
+                    $title = decode_code(substr($data[1],2,-1));
+                    $author = decode_code(substr($data[2],2,-1));
+
+                    if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
                     {
-                        $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
-                        $Books[$BookNumber] = new Book;
-                        $Books[$BookNumber]->title = $title; // Add title and basic information
-                        $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
+                        $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
+                        if ($OutputofFindBookFunction<0) // If not, create a new Book.
+                        {
+                            $BookNumber = $NumberOfFiles; // Hold this constant for the iteration.
+                            $Books[$BookNumber] = new Book;
+                            $Books[$BookNumber]->title = $title; // Add title and basic information
+                            $Books[$BookNumber]->highlights[] = "- By [[".$author."]]\n- (Imported by [[Readwise2Roam]].)\n";
 
-                        $NumberOfFiles++;
+                            $NumberOfFiles++;
+                        }
+
+                        $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
+
+                        $NumberOfHighlights++;
                     }
-
-                    $Books[$BookNumber]->highlights[] = "- ".$text."\n"; // Add the highlight.
-
-                    $NumberOfHighlights++;
+                        
+                    $i++;
                 }
-                    
-                $i++;
+                fclose($handle);
             }
-            fclose($ReverseFile);
 
 
             //unlink("/opt/bitnami/apache2/htdocs/uploads/"."REVERSED-".$fileName.".csv");
