@@ -122,11 +122,11 @@ if(isset($_POST["submit"]))
         $uploadOk = false;
     }
     
-    if((strtolower(pathinfo($target_file,PATHINFO_EXTENSION))!="csv")||$_FILES["fileToUpload"]["type"]!="text/csv")
-    {
-        $error = "Only CSV files are allowed.";
-        $uploadOk = false;
-    }
+    // if((strtolower(pathinfo($target_file,PATHINFO_EXTENSION))!="csv")||$_FILES["fileToUpload"]["type"]!="text/csv")
+    // {
+    //     $error = "Only CSV files are allowed.";
+    //     $uploadOk = false;
+    // }
     
     if (!$uploadOk)
     {
