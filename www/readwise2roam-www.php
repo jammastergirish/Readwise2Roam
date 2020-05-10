@@ -130,7 +130,6 @@ if(isset($_POST["submit"]))
     
     if (!$uploadOk)
     {
-        $error = "Your file was not uploaded.";
         echo "<p><font color=red>".$error."</font></p>";
     
     }
