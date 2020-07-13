@@ -65,9 +65,9 @@ foreach($AllLinesInReversedList as $Line)
     // $num = count($data); // Number of fields
     $data = str_getcsv($Line, ",");
 
-    $text = decode_code(substr($data[0],2,-1));
-    $title = decode_code(substr($data[1],2,-1));
-    $author = decode_code(substr($data[2],2,-1));
+    $text = decode_code(substr($data[0],0));
+    $title = decode_code(substr($data[1],0));
+    $author = decode_code(substr($data[2],0));
 
     if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
     {
