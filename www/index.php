@@ -4,7 +4,7 @@ if ($_SERVER['SERVER_PORT']!=8888) // If I were on 8888, I'd be testing.
 {
   if (substr($_SERVER['HTTP_HOST'],0,3)!="www")
   {
-    header("Location: https://www.".$_SERVER['HTTP_HOST'].$_SERVER[REQUEST_URI]);
+    // header("Location: https://www.".$_SERVER['HTTP_HOST'].$_SERVER[REQUEST_URI]);
   }
 }
 else
