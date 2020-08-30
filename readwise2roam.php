@@ -69,7 +69,7 @@ foreach($AllLinesInReversedList as $Line)
     $title = decode_code(substr($data[1],0));
     $author = decode_code(substr($data[2],0));
 
-    if ($title!="ok Titl") // ok Titl = substr("Book Title",2,-1) (If we're not on the header row (which will be the last))
+    if ($title!="Book Title")
     {
         echo "\n\n";
         $OutputofFindBookFunction = FindBook($Books, $title); // Is the book already within our data structure?
