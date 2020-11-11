@@ -44,4 +44,14 @@ require_once(__DIR__."/style.php");
 <CENTER>
 
 <br><br>
+
+<table border="0" cellpadding="4" cellspacing="0" style="table-layout:fixed" width=700 align=center>
+<tr>
+<td bgcolor="lightgrey" width="100" valign="top" align="center">
+<font face=verdana size=1><p align=justify>There's no longer any need to use Readwise2Roam as Readwise have built their own <a href="https://help.readwise.io/article/71-how-does-the-readwise-to-roam-export-integration-work">plugin</a>! Please use that instead. Thank you everybody who supported Readwise2Roam in the interim.<br><br><p align=right><i><a href="https://www.girishgupta.com/"><font color=black>Girish Gupta</font></a></i></p></p></font>
+</td>
+</tr>
+</table>
+
+<br><br>
 <a href="/"><img src="logo.png" width=400 height=70 alt="Readwise2Roam"></a><br><br><br><br>

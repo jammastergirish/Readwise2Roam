@@ -54,9 +54,9 @@ function RandomString($length = 8)
 <br><br>
 <form action="readwise2roam-www.php" method="POST" enctype="multipart/form-data">
 
-    <input type="file" name="fileToUpload" id="fileToUpload" accept=".csv" class="text_input" required><br><br>
+    <input type="file" name="fileToUpload" id="fileToUpload" accept=".csv" class="text_input" required disabled><br><br>
     <input type="hidden" name="fileName" id="fileName" value="<?php echo RandomString(8); ?>">
-    <input type="submit" class="btn-primary" value="Upload Readwise CSV" name="submit">
+    <input type="submit" class="btn-primary" value="Upload Readwise CSV" name="submit" disabled>
 </form>
 <p><font size=1>To get your Readwise CSV, go to Readwise's <a href="https://readwise.io/export">Export Your Data</a> page and upload the file you get here.<br><br>When you've downloaded the zip file after clicking the button above, unzip that and click the three dots on the top right in <a href="https://www.roamresearch.com">Roam</a>, press "Import" and select the books you'd like to import.</font>
 
